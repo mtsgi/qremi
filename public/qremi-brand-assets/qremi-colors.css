@@ -1,0 +1,10 @@
+/* Qremiのブランド配色を共有するCSS変数。 */
+:root {
+  --qremi-violet: #6b4ce6;
+  --qremi-deep-purple: #493385;
+  --qremi-lavender: #b794f6;
+  --qremi-lilac: #e9d8ff;
+  --qremi-plum: #a26dbb;
+  --qremi-cloud: #f7f4fb;
+  --qremi-mist: #fcfaff;
+}

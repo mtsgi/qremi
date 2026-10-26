@@ -1,77 +1,48 @@
-# qremi
+# Qremi
 
-Vue 3 app built with [Vite+](https://viteplus.dev/) and [Vize](https://vizejs.dev/guide/vite-plus/index.html).
+あなたらしいQRコードを。
 
-## Recommended IDE Setup
+Vue 3・[Vite+](https://viteplus.dev/)・[Vize](https://vizejs.dev/guide/vite-plus/index.html)で作られた、日本語のQRコード生成アプリです。
 
-[VS Code](https://code.visualstudio.com/) with the workspace's recommended extensions:
+## Features
 
-- [Vize](https://marketplace.visualstudio.com/items?itemName=ubugeeei.vize) provides Vue type checking, lint, completion, navigation, and formatting.
-- Vite+, Oxc, and Vitest provide the remaining tooling. Oxc lints JavaScript/TypeScript, including scripts in Vue files, and formats non-Vue files.
+- URL・テキスト（日本語・絵文字・改行）から静的QRコードを作成
+- 3つのプリセット、色・グラデーション・ドットや角の形を編集
+- PNG・JPEG・WebPのロゴを中央に配置（5MBまで）
+- PNG（512・1024・2048px）と、ロゴを埋め込んだSVGをダウンロード
+- IndexedDBに前回の内容・デザイン・ロゴを自動保存
+- レスポンシブ画面とPWAインストール対応
 
-Install the recommended extensions from **Extensions: Show Recommended Extensions**. If Vue - Official (Volar) or Vetur is already installed, select **Disable (Workspace)** for it and reload the window. Vize should be the only Vue language server. Use **Vize: Show Status** to confirm that its language server is available and its features are enabled.
+入力内容やロゴをサーバーに送信せず、ブラウザ内で生成・検証・保存します。読み取り確認は、印刷物やすべての読み取り機器での動作を保証するものではありません。
 
-Workspace settings select Vize as the Vue formatter and enable formatting on save. Other languages keep Oxc. Keep the explicit `source.fixAll.oxc` save action; Vize lint fixes are available through diagnostic quick fixes.
+## Architecture
 
-The workspace TypeScript package uses [typescript-native-bridge](https://github.com/johnsoncodehk/typescript-native-bridge) for TypeScript tooling. Accept VS Code's prompt to use the workspace TypeScript version, or run **TypeScript: Select TypeScript Version** and choose **Use Workspace Version**. Vize's Vue checks use its own native checker.
+`src/lib/qr.ts`に編集データ・プリセット・入力検証、`renderer.ts`にSVG/PNG生成と画像の読み戻し、`storage.ts`にIndexedDB保存をまとめています。
 
-## Recommended Browser Setup
+生成には`@liquid-js/qr-code-styling`、検証には`qr-scanner`を使用し、どちらも遅延読み込みします。生成ライブラリのpeer依存にNode用の画像処理などが含まれますが、本番配信にはブラウザ用ビルドだけを使用します。
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## PWA and hosting
 
-## Type Support for `.vue` Imports in TS
+`vp run build`で生成した`dist/`をHTTPSの静的ホスティングに配置してください。ローカル開発と通常のビルドはルート配信が既定です。素材パスはViteの`base`に追従し、manifestの起動先・スコープ・アイコンはmanifestからの相対パスで解決します。
 
-Vize compiles Vue files and checks the TypeScript projects referenced by `tsconfig.json`, including app code, tests, and tooling configurations. `env.d.ts` references the types provided by Vite+ and Vize for `.vue` imports.
+対応ブラウザのインストール機能、iPhone/iPadではSafariの「ホーム画面に追加」を使えます。Service Worker・オフラインキャッシュは導入していません。起動時は通信が必要です。
 
-Shared Vue settings live in `vite.config.ts` through `.withVue()`. Vue formatting uses no semicolons and single quotes, matching the Oxfmt settings for other files. Keep TypeScript options and project references in the existing tsconfig files.
+### GitHub Pages
 
-The Vize compiler is registered explicitly before DevTools so it also compiles Vue Inspector's overlay in `node_modules`. Keep `compiler: false` on the Vize helper to prevent it from adding a second compiler after DevTools; Vize's check and format tasks remain enabled.
+1. GitHubのリポジトリで **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に設定します。
+2. デプロイ設定を含む変更を`main`へpushします。
+3. **Actions → Deploy to GitHub Pages** の完了後、`github-pages`環境に表示される公開URLを開きます。通常は`https://<ユーザー名>.github.io/<リポジトリ名>/`です。
 
-## Customize configuration
+以後は`main`へのpushで自動デプロイします。手動で再デプロイする場合は、**Actions → Deploy to GitHub Pages → Run workflow** でブランチに`main`を選んで実行します。
 
-See the [Vize Vite+ integration](https://vizejs.dev/guide/vite-plus/index.html) and [Vite Configuration Reference](https://vite.dev/config/).
+ワークフローはNode.js 24とVite+をセットアップし、lockfileに固定した依存関係のインストール、チェック、テスト、ビルドを実行します。すべて成功した場合に`dist/`を公開します。公開パスはGitHub Pagesの設定から取得するため、リポジトリ名をコードに固定する必要はありません。
 
-## Project Setup
-
-```sh
-vp install
-```
-
-### Compile and Hot-Reload for Development
+サブディレクトリ配信をローカルで確認するには、ビルドとプレビューに同じ`base`を指定します。
 
 ```sh
-vp run dev
+vp install --frozen-lockfile
+vp run build -- --base=/qremi/
+vp run preview -- --base=/qremi/
 ```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
-vp run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-vp test --run
-```
-
-### Check and Format
-
-| Command                 | Purpose                                                         |
-| ----------------------- | --------------------------------------------------------------- |
-| `vp run check`          | Vue type checking, Vize and Oxlint lint, and both format checks |
-| `vp run typecheck`      | Type-check the referenced TypeScript projects with Vize         |
-| `vp run lint`           | Run Vize and Oxlint lint                                        |
-| `vp run fmt:check`      | Check formatting without writing files                          |
-| `vp run fmt`            | Format Vue with Vize and other files with Oxfmt                 |
-| `vp run format`         | Format only `src/` using both formatters                        |
-| `vp run check -- --fix` | Check types, apply lint fixes, and format                       |
-
-Use `vp run check` for the complete check. Built-in `vp check`, `vp lint`, and `vp fmt` do not invoke Vize's tasks. `vp run type-check` remains an alias for `vp run typecheck`; `vp run build` runs this type check alongside the production build.
-
-The pre-commit hook runs `vp staged`, whose staged-file check uses `vp run check -- --fix`. Run `vp run check` before committing to check the whole project.
+表示されたローカルURLの`/qremi/`を開き、画像表示、QR生成・PNG/SVG保存、manifestの起動先とアイコンを確認してください。

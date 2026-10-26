@@ -5,9 +5,12 @@ import { defineConfig } from '@vizejs/vite-plugin/vite-plus'
 import { lazyPlugins } from 'vite-plus'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-// https://vizejs.dev/guide/vite-plus/index.html
+/**
+ * アプリのビルド、検証、整形をVite+とVizeで統合する。
+ * @see https://vizejs.dev/guide/vite-plus/index.html
+ */
 export default defineConfig({
-  // Register Vize before DevTools so it compiles Vue Inspector's dependency SFCs.
+  // Vue Inspectorの依存SFCもコンパイルできるよう、DevToolsより先にVizeを登録する。
   compiler: false,
   staged: {
     '*': 'vp run check -- --fix',
@@ -31,5 +34,7 @@ export default defineConfig({
   fmt: {
     semi: false,
     singleQuote: true,
+    singleAttributePerLine: true,
+    bracketSameLine: false,
   },
 })

@@ -8,7 +8,7 @@ afterEach(() => {
 
 describe('development tooling', () => {
   it('compiles the Vue Inspector overlay imported by DevTools', async () => {
-    // Inspector is disabled under NODE_ENV=test, so use the actual dev configuration.
+    // NODE_ENV=testではInspectorが無効になるため、実際の開発設定を使用する。
     vi.stubEnv('NODE_ENV', 'development')
     const server = await createServer({
       logLevel: 'silent',

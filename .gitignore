@@ -1,4 +1,4 @@
-# Logs
+# ログファイル
 logs
 *.log
 npm-debug.log*
@@ -14,7 +14,7 @@ dist-ssr
 coverage
 *.local
 
-# Editor directories and files
+# エディタ関連のディレクトリとファイル
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -28,14 +28,14 @@ coverage
 
 .eslintcache
 
-# Cypress
+# Cypressの実行結果
 /cypress/videos/
 /cypress/screenshots/
 
-# Vitest
+# Vitestのスクリーンショット
 __screenshots__/
 
-# Vite
+# Viteの一時ファイル
 *.timestamp-*-*.mjs
 
 !.vscode/settings.json
@@ -43,7 +43,7 @@ __screenshots__/
 !.vscode/settings.json
 !.vscode/extensions.json
 
-# dotenv environment variable files
+# dotenvの環境変数ファイル
 .env
 .env.*
 !.env.example

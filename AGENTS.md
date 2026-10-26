@@ -39,3 +39,10 @@ release. Add a tool name to select part of the graph. For example, run
 - Focused checks are `vp run typecheck`, `vp run lint`, and `vp run fmt:check`. Apply fixes with `vp run check -- --fix`. The pre-commit hook uses this task for staged files.
 - Validate changes with `vp run check`, `vp check`, `vp test --run`, and `vp run build`. Confirm formatting is stable with `vp run fmt:check`.
 - VS Code uses the recommended Vize extension for all Vue language features and formatting. Keep the Vite+, Oxc, and Vitest extensions. Disable Vue - Official (Volar) and Vetur for this workspace if installed to avoid duplicate Vue language services.
+
+## コード内のドキュメント
+
+- JSDocおよび説明コメントは日本語で記述する。
+- exportする関数・型・定数とinterfaceには、役割や利用時の注意が分かるJSDocを付ける。
+- 宣言、条件分岐、非同期処理などのまとまりの間に空行を入れ、複数の処理を詰め込まない。
+- Vueテンプレートは親子要素や属性を適切に改行し、フォーマット後も読みやすい配置を保つ。
