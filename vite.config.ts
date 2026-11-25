@@ -13,7 +13,8 @@ export default defineConfig({
   // Vue Inspectorの依存SFCもコンパイルできるよう、DevToolsより先にVizeを登録する。
   compiler: false,
   staged: {
-    '*': 'vp run check -- --fix',
+    '*.{vue,ts,mts,cts,tsx,js,mjs,cjs,jsx,html,htm,css,json,jsonc,md,yml,yaml}':
+      'vp run check -- --fix',
   },
   lint: {
     jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
