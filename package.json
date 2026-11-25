@@ -6,19 +6,26 @@
   "scripts": {
     "dev": "vp dev",
     "build": "run-p type-check \"build-only {@}\" --",
+    "build:android": "vp run build -- --base=/",
     "preview": "vp preview",
     "test:unit": "vp test",
     "build-only": "vp build",
     "type-check": "vp run typecheck",
     "format": "vp run fmt -- src/",
+    "android:sync": "vp run build:android && vp exec cap sync android",
+    "android:open": "vp exec cap open android",
+    "android:apk:debug": "vp run android:sync && node ./scripts/build-android-apk.mjs",
     "prepare": "vp config"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
     "@liquid-js/qr-code-styling": "^5.6.1",
     "qr-scanner": "^1.4.2",
     "vue": "rc"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
     "@tsconfig/node24": "^24.0.5",
     "@types/jsdom": "^30.0.0",
     "@types/node": "^24.13.4",

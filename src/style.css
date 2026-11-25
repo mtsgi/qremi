@@ -18,6 +18,10 @@
 body {
   margin: 0;
   min-width: 320px;
+  padding: var(--safe-area-inset-top, env(safe-area-inset-top, 0px))
+    var(--safe-area-inset-right, env(safe-area-inset-right, 0px))
+    var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))
+    var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
 }
 button,
 input,
@@ -93,7 +97,7 @@ p {
   z-index: 20;
 }
 .skip-link:focus {
-  top: 12px;
+  top: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
 }
 .site-header {
   height: 89px;
@@ -1123,7 +1127,7 @@ input[type='range'] {
   }
   .mobile-preview-link {
     position: fixed;
-    bottom: max(15px, env(safe-area-inset-bottom));
+    bottom: calc(15px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
