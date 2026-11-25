@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Capacitor } from '@capacitor/core'
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import AppIcon from './components/AppIcon.vue'
 import QrPreview from './components/QrPreview.vue'
@@ -16,6 +17,7 @@ interface InstallPrompt extends Event {
 }
 
 const baseUrl = import.meta.env.BASE_URL
+const isNative = Capacitor.isNativePlatform()
 
 const {
   draft,
@@ -134,6 +136,10 @@ function resetEditor() {
 }
 
 onMounted(() => {
+  if (isNative) {
+    return
+  }
+
   installed.value =
     window.matchMedia('(display-mode: standalone)').matches ||
     !!(navigator as Navigator & { standalone?: boolean }).standalone
@@ -150,8 +156,10 @@ onBeforeUnmount(() => {
     URL.revokeObjectURL(logoUrl.value)
   }
 
-  window.removeEventListener('beforeinstallprompt', captureInstall)
-  window.removeEventListener('appinstalled', onInstalled)
+  if (!isNative) {
+    window.removeEventListener('beforeinstallprompt', captureInstall)
+    window.removeEventListener('appinstalled', onInstalled)
+  }
 })
 </script>
 
@@ -183,28 +191,30 @@ onBeforeUnmount(() => {
         MAKE YOUR QR YOURS.
       </h1>
     </div>
-    <button
-      v-if="!installed"
-      class="button install-button"
-      type="button"
-      @click="install"
-    >
-      <AppIcon
-        name="phone"
-        :size="17"
-      />
-      <span>アプリとして使う</span>
-    </button>
-    <span
-      v-else
-      class="installed-label"
-    >
-      <AppIcon
-        name="check"
-        :size="16"
-      />
-      インストール済み
-    </span>
+    <template v-if="!isNative">
+      <button
+        v-if="!installed"
+        class="button install-button"
+        type="button"
+        @click="install"
+      >
+        <AppIcon
+          name="phone"
+          :size="17"
+        />
+        <span>アプリとして使う</span>
+      </button>
+      <span
+        v-else
+        class="installed-label"
+      >
+        <AppIcon
+          name="check"
+          :size="16"
+        />
+        インストール済み
+      </span>
+    </template>
   </header>
   <main aria-labelledby="page-heading">
     <div class="workspace">
@@ -501,7 +511,7 @@ onBeforeUnmount(() => {
               name="shield"
               :size="15"
             />
-            作業はこのブラウザに自動保存
+            {{ isNative ? '作業はこの端末に自動保存' : '作業はこのブラウザに自動保存' }}
           </span>
           <button
             class="text-button"
@@ -610,6 +620,7 @@ onBeforeUnmount(() => {
     />
   </a>
   <dialog
+    v-if="!isNative"
     ref="installDialog"
     aria-labelledby="install-title"
     class="app-dialog"

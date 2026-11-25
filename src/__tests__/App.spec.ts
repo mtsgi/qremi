@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vite-plus/test'
+import { Capacitor } from '@capacitor/core'
 import { flushPromises, mount } from '@vue/test-utils'
 import App from '../App.vue'
 
@@ -11,7 +12,10 @@ beforeEach(() => {
   vi.stubGlobal('matchMedia', () => ({ matches: false }))
 })
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.unstubAllGlobals()
+})
 
 describe('App', () => {
   it('renders the branded editor and disables exports before input', async () => {
@@ -21,6 +25,7 @@ describe('App', () => {
     expect(wrapper.get('h1').text()).toBe('MAKE YOUR QR YOURS.')
     expect(wrapper.get('button.primary-button').attributes('disabled')).toBeDefined()
     expect(wrapper.get('input[type="url"]').attributes('placeholder')).toBe('https://example.com')
+    expect(wrapper.find('.install-button').exists()).toBe(true)
 
     wrapper.unmount()
   })
@@ -38,6 +43,19 @@ describe('App', () => {
 
     expect(wrapper.get('textarea').element.value).toBe('not a URL')
     expect(textButton.attributes('aria-pressed')).toBe('true')
+
+    wrapper.unmount()
+  })
+
+  it('hides PWA install controls on native platforms', async () => {
+    vi.spyOn(Capacitor, 'isNativePlatform').mockReturnValue(true)
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    expect(wrapper.find('.install-button').exists()).toBe(false)
+    expect(wrapper.find('#install-title').exists()).toBe(false)
+    expect(wrapper.get('.editor-bottom').text()).toContain('この端末に自動保存')
 
     wrapper.unmount()
   })
